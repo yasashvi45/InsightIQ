@@ -1,0 +1,6 @@
+{
+  "name": "InsightIQ",
+  "description": "AI Business Intelligence Platform that analyzes business data to detect trends, anomalies, and generate actionable insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
