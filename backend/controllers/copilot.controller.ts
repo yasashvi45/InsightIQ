@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getGeminiClient } from "../config/gemini.js";
+import { getGeminiClient } from "../config/gemini";
 import { Type } from "@google/genai";
 
 export class CopilotController {

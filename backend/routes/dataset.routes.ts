@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { uploadDataset, deleteDataset, proxyDownloadDataset, getSampleDataset } from "../controllers/dataset.controller.js";
+import { uploadDataset, deleteDataset, proxyDownloadDataset, getSampleDataset } from "../controllers/dataset.controller";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });

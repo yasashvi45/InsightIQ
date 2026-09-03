@@ -3,8 +3,8 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import helmet from "helmet";
-import { aiRoutes } from "./routes/ai.routes.js";
-import { datasetRoutes } from "./routes/dataset.routes.js";
+import { aiRoutes } from "./routes/ai.routes";
+import { datasetRoutes } from "./routes/dataset.routes";
 
 const app = express();
 

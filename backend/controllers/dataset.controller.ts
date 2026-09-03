@@ -1,6 +1,6 @@
 import os from "os";
 import { Request, Response } from 'express';
-import { supabase } from '../config/supabase.js';
+import { supabase } from '../config/supabase';
 import path from 'path';
 import fs from 'fs';
 
@@ -75,10 +75,12 @@ export const uploadDataset = async (req: Request, res: Response) => {
           });
 
         if (error) {
-          console.warn('Supabase upload warning (saved to local backup):', error.message);
+          console.error('Supabase upload failed:', error.message);
+          return res.status(500).json({ success: false, error: 'Failed to upload to cloud storage', details: error.message });
         }
       } catch (cloudErr: any) {
-        console.warn('Supabase storage exception (saved to local backup):', cloudErr.message);
+        console.error('Supabase storage exception:', cloudErr.message);
+        return res.status(500).json({ success: false, error: 'Cloud storage exception', details: cloudErr.message });
       }
     }
 

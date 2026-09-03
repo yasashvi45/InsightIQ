@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import app from "./backend/app.js";
+import app from "./backend/app";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 

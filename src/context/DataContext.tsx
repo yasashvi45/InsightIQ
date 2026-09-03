@@ -421,10 +421,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
               newDataset.storagePath = uploadData.storagePath;
             }
           } else {
-            console.warn('Backend storage upload returned status:', uploadRes.status);
+            const errData = await uploadRes.json().catch(() => ({}));
+            throw new Error(errData.error || `Backend upload failed with status ${uploadRes.status}`);
           }
-        } catch (uploadNetErr) {
-          console.warn('Backend storage upload network warning:', uploadNetErr);
+        } catch (uploadNetErr: any) {
+          console.error('Backend storage upload network error:', uploadNetErr);
+          throw new Error(uploadNetErr.message || 'Failed to connect to upload server');
         }
 
         if (onProgress) onProgress(80);

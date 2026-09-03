@@ -1,5 +1,5 @@
-import { getGeminiClient } from "../config/gemini.js";
-import { buildAiSystemPrompt } from "../utils/promptBuilder.js";
+import { getGeminiClient } from "../config/gemini";
+import { buildAiSystemPrompt } from "../utils/promptBuilder";
 import Papa from "papaparse";
 
 // Maintain a simple in-memory session store for chat history

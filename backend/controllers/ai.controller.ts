@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { GeminiService } from "../services/gemini.service.js";
+import { GeminiService } from "../services/gemini.service";
 
 export class AiController {
   static async chat(req: Request, res: Response) {

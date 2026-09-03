@@ -1,7 +1,7 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { AiController } from "../controllers/ai.controller.js";
-import { CopilotController } from "../controllers/copilot.controller.js";
+import { AiController } from "../controllers/ai.controller";
+import { CopilotController } from "../controllers/copilot.controller";
 
 const router = Router();
 
