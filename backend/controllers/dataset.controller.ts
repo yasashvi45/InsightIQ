@@ -1,6 +1,7 @@
 import os from "os";
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
+import { DEFAULT_SAMPLE_CSV } from '../data/sampleDataset';
 import path from 'path';
 import fs from 'fs';
 
@@ -231,6 +232,11 @@ export const proxyDownloadDataset = async (req: Request, res: Response) => {
           return res.send(sampleBuf);
         }
       }
+
+      // Return embedded default sample dataset
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="sample_dataset.csv"`);
+      return res.send(Buffer.from(DEFAULT_SAMPLE_CSV));
     }
 
     // 5. If not found after all recovery attempts, log as warning (not console.error) and return 404
@@ -274,7 +280,10 @@ export const getSampleDataset = async (req: Request, res: Response) => {
       }
     }
 
-    return res.status(404).json({ success: false, error: 'Sample dataset not available' });
+    // Guaranteed fallback from embedded default dataset
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="sample_dataset.csv"');
+    return res.send(Buffer.from(DEFAULT_SAMPLE_CSV));
   } catch (error: any) {
     return res.status(500).json({ success: false, error: 'Failed to retrieve sample dataset' });
   }

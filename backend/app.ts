@@ -44,15 +44,21 @@ app.use(express.json({ limit: "50mb" })); // To handle potentially large context
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // API routes FIRST
-app.get("/api/health", (req, res) => {
+const healthHandler = (req: express.Request, res: express.Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString(), env: process.env.NODE_ENV });
-});
+};
+
+app.get("/api/health", healthHandler);
+app.get("/health", healthHandler);
 
 // Serve local uploads (only works effectively locally, on Vercel this is read-only except /tmp)
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/ai", aiRoutes);
+app.use("/ai", aiRoutes);
+
 app.use("/api/datasets", datasetRoutes);
+app.use("/datasets", datasetRoutes);
 
 // API 404 handler: Never return HTML for unhandled API requests
 app.all('/api/*', (req, res) => {
