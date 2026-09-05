@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Download, Share2, Eye, Search, Clock, Trash2, Settings, Users, PieChart, Zap, ChevronRight, BarChart2, Activity, Play, File } from 'lucide-react';
 import { useData, Report } from '../context/DataContext';
-import { computeForecast, formatNumber } from '../lib/dataUtils';
+import { computeForecast, formatNumber, computeMetrics } from '../lib/dataUtils';
 import { useAuth } from '../context/AuthContext';
 import { GenerationDialog } from '../components/Reports/GenerationDialog';
 import { ReportViewer } from '../components/Reports/ReportViewer';
@@ -91,7 +91,7 @@ export function Reports() {
       datasetId: activeDataset.id,
       generatedBy: user?.name || 'System User',
       status: 'Completed' as const,
-      metricsSnapshot: activeDataset.metrics
+      metricsSnapshot: activeDataset.metrics || computeMetrics(activeDataset)
     };
 
     await generateReport(newReportData);

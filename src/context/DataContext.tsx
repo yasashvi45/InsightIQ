@@ -78,9 +78,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   
   const [isFetchingActiveData, setIsFetchingActiveData] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
+    if (authLoading) return; // Wait for authentication to resolve
+
     if (user?.id === 'demo') {
       const demoDataset = {
         id: 'demo-1',
@@ -446,7 +448,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
           // Set the new dataset metadata (without large raw data)
           const newRef = doc(db, 'users', user.id, 'datasets', datasetId);
-          batch.set(newRef, sanitizeForFirestore(newDataset));
+          const { data, rawData, metrics, ...firestoreDataset } = newDataset as any;
+          batch.set(newRef, sanitizeForFirestore(firestoreDataset));
           await batch.commit();
         } catch (dbErr) {
           console.warn('Firestore sync warning for dataset:', dbErr);

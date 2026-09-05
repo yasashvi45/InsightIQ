@@ -1,5 +1,6 @@
 import { getGeminiClient } from "../config/gemini";
 import { buildAiSystemPrompt } from "../utils/promptBuilder";
+import { supabase } from "../config/supabase";
 import Papa from "papaparse";
 
 // Maintain a simple in-memory session store for chat history
@@ -24,34 +25,45 @@ export class GeminiService {
 
     let datasetData = datasetContext?.data || null;
 
-    if (!datasetData && datasetContext?.downloadURL) {
+    if (!datasetData) {
       try {
-        console.log(`Downloading file from: ${datasetContext.downloadURL}`);
         let csvText = "";
         
-        if (datasetContext.downloadURL.startsWith("/uploads/")) {
-           const fs = await import("fs");
-           const path = await import("path");
-           const localPath = path.join(process.cwd(), datasetContext.downloadURL);
-           csvText = fs.readFileSync(localPath, "utf-8");
-        } else {
-           const res = await fetch(datasetContext.downloadURL);
-           if (!res.ok) throw new Error(`Failed to fetch CSV: ${res.statusText}`);
-           csvText = await res.text();
+        if (datasetContext?.storagePath && supabase) {
+          console.log(`Downloading file from Supabase: ${datasetContext.storagePath}`);
+          const { data, error } = await supabase.storage
+            .from('insightiq-datasets')
+            .download(datasetContext.storagePath);
+            
+          if (error) {
+            throw new Error(`Supabase download error: ${error.message}`);
+          }
+          csvText = await data.text();
+        } else if (datasetContext?.downloadURL) {
+          console.log(`Downloading file from: ${datasetContext.downloadURL}`);
+          let url = datasetContext.downloadURL;
+          if (url.startsWith('/')) {
+             throw new Error("Cannot fetch relative URL from server.");
+          }
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`Failed to fetch CSV: ${res.statusText}`);
+          csvText = await res.text();
         }
         
-        const parsed = Papa.parse(csvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
-        if (parsed.errors.length && !parsed.data.length) {
-          throw new Error(`CSV Parsing failed: ${parsed.errors[0].message}`);
+        if (csvText) {
+          const parsed = Papa.parse(csvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+          if (parsed.errors.length && !parsed.data.length) {
+            throw new Error(`CSV Parsing failed: ${parsed.errors[0].message}`);
+          }
+          datasetData = parsed.data;
+          console.log('--- CSV LOADED ---');
+          console.log(`Downloaded file: ${datasetContext?.name}`);
+          console.log(`Rows parsed: ${datasetData.length}`);
+          console.log(`Columns parsed: ${Object.keys(datasetData[0] || {}).length}`);
+          
+          // Update dataset context for prompt builder
+          datasetContext.data = datasetData;
         }
-        datasetData = parsed.data;
-        console.log('--- CSV LOADED ---');
-        console.log(`Downloaded file: ${datasetContext.name}`);
-        console.log(`Rows parsed: ${datasetData.length}`);
-        console.log(`Columns parsed: ${Object.keys(datasetData[0] || {}).length}`);
-        
-        // Update dataset context for prompt builder
-        datasetContext.data = datasetData;
       } catch (err: any) {
         console.error("Error downloading/parsing CSV:", err);
         throw new Error(`Failed to load dataset: ${err.message}`);
@@ -65,17 +77,19 @@ export class GeminiService {
     const systemPrompt = buildAiSystemPrompt(datasetContext, history, currentFilters, currentState);
 
     try {
-      console.log('Model name: gemini-2.5-flash');
+      console.log('Model name: gemini-3.6-flash');
       console.log('Prompt length:', systemPrompt.length + question.length);
       console.log('Dataset size (rows):', datasetContext?.data?.length || 0);
 
       // Build contents array for multi-turn chat
       const contents: any[] = [];
       
-      // Add system prompt as the first user message (a common workaround if system instruction isn't directly supported or to ensure strong adherence)
-      // Actually, genai SDK supports systemInstruction, let's use that.
-      
-      for (const msg of history) {
+      let filteredHistory = [...history];
+      while (filteredHistory.length > 0 && filteredHistory[0].role !== 'user') {
+        filteredHistory.shift();
+      }
+
+      for (const msg of filteredHistory) {
         contents.push({
           role: msg.role === 'model' ? 'model' : 'user',
           parts: [{ text: msg.content }]
@@ -89,7 +103,7 @@ export class GeminiService {
       });
 
       const responseStream = await ai.models.generateContentStream({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: contents,
         config: {
           systemInstruction: systemPrompt

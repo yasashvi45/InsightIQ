@@ -828,20 +828,20 @@ export function Assistant() {
 
         <div className={cn(
           "shrink-0 bg-[var(--color-brand-card)] flex flex-col transition-all duration-300 absolute lg:relative right-0 top-0 bottom-0 z-40 shadow-2xl lg:shadow-none overflow-hidden",
-          isPanelOpen ? "w-[320px] translate-x-0 border-l border-[var(--color-brand-border)] opacity-100" : "w-0 translate-x-full lg:translate-x-0 opacity-0 lg:border-none"
+          isPanelOpen ? "w-[264px] translate-x-0 border-l border-[var(--color-brand-border)] opacity-100" : "w-0 translate-x-full lg:translate-x-0 opacity-0 lg:border-none"
         )}>
-          <div className="w-[320px] h-full flex flex-col">
-            <div className="h-16 shrink-0 border-b border-[var(--color-brand-border)] px-5 flex items-center justify-between gap-2 bg-[var(--color-brand-card)]/80 backdrop-blur-md">
+          <div className="w-[264px] h-full flex flex-col">
+            <div className="h-16 shrink-0 border-b border-[var(--color-brand-border)] px-4 flex items-center justify-between gap-2 bg-[var(--color-brand-card)]/80 backdrop-blur-md">
               <div className="flex flex-row items-center gap-1 sm:gap-2 min-w-0">
                 <LayoutDashboard className="w-4 h-4 text-[var(--color-brand-primary)]" />
-                <h2 className="text-sm font-semibold text-[var(--color-brand-text)] uppercase tracking-wider">Quick Analysis</h2>
+                <h2 className="text-xs sm:text-sm font-semibold text-[var(--color-brand-text)] uppercase tracking-wider">Quick Analysis</h2>
               </div>
               <button onClick={() => setIsPanelOpen(false)} className="p-1.5 text-[var(--color-brand-muted)] hover:text-[var(--color-brand-text)] hover:bg-[var(--color-brand-bg)] rounded-lg transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
           
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6 min-h-0">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-5 min-h-0">
             {isFetchingActiveData ? (
               <div className="flex flex-col items-center justify-center py-10 text-[var(--color-brand-muted)]">
                 <Loader2 className="w-5 h-5 animate-spin text-[var(--color-brand-primary)]" />
@@ -888,36 +888,36 @@ export function Assistant() {
                   <div className="space-y-2">
                     {metrics.hasRevenueData ? (
                       <div className="bg-[var(--color-brand-bg)] rounded-xl border border-[var(--color-brand-border)] p-3 flex justify-between items-center shadow-sm">
-                        <span className="text-sm text-[var(--color-brand-muted)]">Total Revenue</span>
-                        <span className="font-bold text-[var(--color-brand-text)]">{currencySymbol}{formatNumber(metrics.totalRevenue)}</span>
+                        <span className="text-xs text-[var(--color-brand-muted)] font-medium">Total Revenue</span>
+                        <span className="font-bold text-xs sm:text-sm text-[var(--color-brand-text)]">{currencySymbol}{formatNumber(metrics.totalRevenue)}</span>
                       </div>
                     ) : (
                       <div className="bg-[var(--color-brand-bg)] rounded-xl border border-[var(--color-brand-border)] p-3 flex justify-between items-center shadow-sm opacity-50">
-                        <span className="text-sm text-[var(--color-brand-muted)] flex flex-col gap-0.5">
+                        <span className="text-xs text-[var(--color-brand-muted)] flex flex-col gap-0.5">
                            <span>Total Revenue</span>
                            <span className="text-[10px]">Unavailable - no revenue field</span>
                         </span>
-                        <span className="font-bold text-[var(--color-brand-text)]">-</span>
+                        <span className="font-bold text-xs text-[var(--color-brand-text)]">-</span>
                       </div>
                     )}
                     
                     <div className="bg-[var(--color-brand-bg)] rounded-xl border border-[var(--color-brand-border)] p-3 flex justify-between items-center shadow-sm">
-                      <span className="text-sm text-[var(--color-brand-muted)]">Rows (Orders/Records)</span>
-                      <span className="font-bold text-[var(--color-brand-text)]">{formatNumber(activeDataset.data?.length || 0)}</span>
+                      <span className="text-xs text-[var(--color-brand-muted)] font-medium">Rows (Records)</span>
+                      <span className="font-bold text-xs sm:text-sm text-[var(--color-brand-text)]">{formatNumber(activeDataset.data?.length || 0)}</span>
                     </div>
 
                     {metrics.hasCustomerData ? (
                       <div className="bg-[var(--color-brand-bg)] rounded-xl border border-[var(--color-brand-border)] p-3 flex justify-between items-center shadow-sm">
-                        <span className="text-sm text-[var(--color-brand-muted)]">Customers</span>
-                        <span className="font-bold text-[var(--color-brand-text)]">{formatNumber(metrics.totalCustomers)}</span>
+                        <span className="text-xs text-[var(--color-brand-muted)] font-medium">Customers</span>
+                        <span className="font-bold text-xs sm:text-sm text-[var(--color-brand-text)]">{formatNumber(metrics.totalCustomers)}</span>
                       </div>
                     ) : (
                       <div className="bg-[var(--color-brand-bg)] rounded-xl border border-[var(--color-brand-border)] p-3 flex justify-between items-center shadow-sm opacity-50">
-                        <span className="text-sm text-[var(--color-brand-muted)] flex flex-col gap-0.5">
+                        <span className="text-xs text-[var(--color-brand-muted)] flex flex-col gap-0.5">
                            <span>Customers</span>
                            <span className="text-[10px]">Unavailable - no customer field</span>
                         </span>
-                        <span className="font-bold text-[var(--color-brand-text)]">-</span>
+                        <span className="font-bold text-xs text-[var(--color-brand-text)]">-</span>
                       </div>
                     )}
                   </div>

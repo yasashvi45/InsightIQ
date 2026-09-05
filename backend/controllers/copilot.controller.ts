@@ -45,7 +45,13 @@ Metrics summary: ${JSON.stringify(metricsSummary)}`;
       const contents: any[] = [];
       
       if (history && Array.isArray(history)) {
-        for (const msg of history) {
+        let filteredHistory = [...history];
+        // Gemini strictly requires the first message in contents to be from a 'user'
+        while (filteredHistory.length > 0 && filteredHistory[0].role !== 'user') {
+          filteredHistory.shift();
+        }
+        
+        for (const msg of filteredHistory) {
           contents.push({
             role: msg.role === 'assistant' ? 'model' : 'user',
             parts: [{ text: msg.content }]
@@ -67,7 +73,7 @@ Metrics summary: ${JSON.stringify(metricsSummary)}`;
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: contents,
         config: {
           systemInstruction: systemPrompt,
